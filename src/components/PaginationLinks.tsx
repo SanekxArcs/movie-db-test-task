@@ -15,7 +15,7 @@ export default function PaginationLinks({
 
   const generatePaginationItems = () => {
     const items = [];
-    const maxVisiblePages = 5;
+    const maxVisiblePages = 3;
 
     items.push(1);
 

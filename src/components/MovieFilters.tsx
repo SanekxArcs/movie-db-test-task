@@ -21,11 +21,11 @@ export default function MovieFilters() {
   };
 
   return (
-    <div className="flex flex-col sm:flex-row gap-4 mb-6">
-      <div className="w-full gap-2 flex">
-        <Label>Sortuj według:</Label>
+    <div className="flex flex-row gap-2">
+      <Label>Sortuj:</Label>
+      <div className="flex-1 lg:w-60 md:w-50">
         <Select value={currentSort} onValueChange={handleSortChange}>
-          <SelectTrigger>
+          <SelectTrigger className="w-full">
             <SelectValue placeholder="Sort by" />
           </SelectTrigger>
           <SelectContent>

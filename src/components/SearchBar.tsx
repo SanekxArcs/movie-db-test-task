@@ -55,7 +55,7 @@ export default function SearchBar({
     <form
       onSubmit={handleSearch}
       className={cn(
-        "relative flex w-full max-w-sm items-center space-x-2",
+        "relative flex w-full lg:max-w-sm items-center space-x-2",
         className
       )}
     >
