@@ -1,4 +1,6 @@
 "use client";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 interface ErrorProps {
@@ -12,7 +14,12 @@ export default function Error({
   resetErrorBoundary,
   message = "Wystąpił nieoczekiwany błąd",
 }: ErrorProps) {
-  const navigate = useRouter();
+  const router = useRouter();
+
+  const handleRetry = () => {
+    // Refresh the current page
+    router.refresh();
+  };
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[400px] p-6 text-center">
@@ -40,19 +47,19 @@ export default function Error({
       </p>
       <div className="flex flex-col sm:flex-row gap-4">
         {resetErrorBoundary && (
-          <button
-            onClick={resetErrorBoundary}
+          <Button
+            onClick={handleRetry}
             className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background bg-blue-600 text-white hover:bg-blue-700 h-10 py-2 px-4"
           >
             Spróbuj ponownie
-          </button>
+          </Button>
         )}
-        <button
-          onClick={() => navigate.push("/")}
+        <Link
+          href={"/"}
           className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 py-2 px-4"
         >
           Wróć do strony głównej
-        </button>
+        </Link>
       </div>
     </div>
   );
