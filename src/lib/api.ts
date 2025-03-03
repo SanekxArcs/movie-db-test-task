@@ -1,5 +1,3 @@
-
-
 import { Movie, MovieResponse } from "@/types/movie";
 
 const API_KEY = process.env.TMDB_API_KEY;
@@ -50,8 +48,6 @@ export async function getMovies(
   return data;
 }
 
-
-
 export async function getMovieDetails(
   id: string,
   language = "pl-PL"
@@ -95,49 +91,47 @@ export async function getCategories(language = "en-US") {
   return data;
 }
 
-export async function searchMovies(
-  query: string,
-  page = 1,
-  language = "pl-PL"
-): Promise<MovieResponse> {
-  const cacheKey = `search-${query}-${page}-${language}`;
-
-  if (cache.has(cacheKey)) {
-    return cache.get(cacheKey);
-  }
-
+export async function searchMovies(query: string, page: number = 1) {
+  if (!query) return { results: [], total_pages: 0, total_results: 0 };
+  
+  const url = `${BASE_URL}/search/movie?api_key=${API_KEY}&query=${encodeURIComponent(query)}&page=${page}`;
+  
   try {
-    const response = await fetch(
-      `${BASE_URL}/search/movie?api_key=${API_KEY}&language=${language}&query=${encodeURIComponent(
-        query
-      )}&page=${page}`
-    );
-
+    const response = await fetch(url);
     if (!response.ok) {
-      throw new Error("Nie udało się wyszukać filmów");
+      throw new Error('Failed to fetch search results');
     }
-
-    const data = await response.json();
-    cache.set(cacheKey, data);
-
-    return data;
+    return await response.json();
   } catch (error) {
-    console.error("Błąd podczas wyszukiwania filmów:", error);
-    throw error;
+    console.error('Error searching movies:', error);
+    return { results: [], total_pages: 0, total_results: 0 };
   }
 }
 
 export const getImageUrl = (path: string | undefined) => {
-  if (!path) return "/placeholder.png";
   return `${IMAGE_BASE_URL}${path}`;
 };
-
 export const movieCategories = [
   { id: "popular", name: "Popularne", endpoint: "/movie/popular" },
   { id: "top_rated", name: "Najwyżej oceniane", endpoint: "/movie/top_rated" },
   { id: "upcoming", name: "Nadchodzące", endpoint: "/movie/upcoming" },
   { id: "now_playing", name: "Teraz w kinach", endpoint: "/movie/now_playing" },
 ];
+
+export async function getPopularMovies(page: number = 1) {
+  const url = `${BASE_URL}/movie/popular?api_key=${API_KEY}&page=${page}`;
+  
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error('Failed to fetch popular movies');
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching popular movies:', error);
+    return { results: [], total_pages: 0, total_results: 0 };
+  }
+}
 
 export const fetchMoviesByCategory = getMovies;
 export const fetchMovieDetails = getMovieDetails;
