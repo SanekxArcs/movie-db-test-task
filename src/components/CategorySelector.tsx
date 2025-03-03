@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/select";
 import { Label } from "./ui/label";
 import { Loader2 } from "lucide-react";
+import { TooltipWrapper } from "./ui/tooltip-wrapper";
 
 interface Genre {
   id: number;
@@ -53,7 +54,9 @@ export default function CategorySelector() {
 
   return (
     <div className="flex flex-row gap-2">
+      
       <Label>Kategoria:</Label>
+      <TooltipWrapper text="Wybierz kategorię filmów">
       <div className="flex-1 lg:w-60 md:w-50">
         <Select
           value={currentCategory}
@@ -93,6 +96,7 @@ export default function CategorySelector() {
           </SelectContent>
         </Select>
       </div>
+      </TooltipWrapper>
 
       {error && <p className="text-sm text-red-500 w-full">{error}</p>}
     </div>

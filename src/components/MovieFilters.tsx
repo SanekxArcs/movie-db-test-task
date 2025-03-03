@@ -8,6 +8,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Label } from "./ui/label";
+import { TooltipWrapper } from "./ui/tooltip-wrapper";
 
 export default function MovieFilters() {
   const router = useRouter();
@@ -23,7 +24,8 @@ export default function MovieFilters() {
   return (
     <div className="flex flex-row gap-2">
       <Label>Sortuj:</Label>
-      <div className="flex-1 lg:w-60 md:w-50">
+      <TooltipWrapper text="Wybierz sposób sortowania filmów">
+        <div className="flex-1 lg:w-60 md:w-50">
         <Select value={currentSort} onValueChange={handleSortChange}>
           <SelectTrigger className="w-full">
             <SelectValue placeholder="Sort by" />
@@ -36,6 +38,8 @@ export default function MovieFilters() {
           </SelectContent>
         </Select>
       </div>
+      </TooltipWrapper>
+      
     </div>
   );
 }

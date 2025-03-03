@@ -1,11 +1,7 @@
 import { Suspense } from "react";
 import MovieGrid from "@/components/MovieGrid";
-import MovieFilters from "@/components/MovieFilters";
-import CategorySelector from "@/components/CategorySelector";
 import { LoadingMovieGrid } from "@/components/LoadingStates";
-import Loading from "./loading";
-import { Clapperboard } from "lucide-react";
-import { ModeToggle } from "@/components/ui/mode-toggle";
+import Header from "@/components/Header";
 
 type Params = Promise<{
   key: string;
@@ -27,23 +23,7 @@ export default async function Home(props: { searchParams: Params }) {
 
   return (
     <main className="container mx-auto px-4 py-8">
-      <div className="mb-6 flex items-start gap-2 flex-col justify-between">
-        <h1 className="text-3xl font-bold flex justify-center items-center">
-          <Clapperboard className="mr-1 h-8 w-8" /> Movie DB App
-        </h1>
-        <p className="text-foreground text-sm">
-          Zadanie rekrutacyjne dla hurtopony.pl
-        </p>
-      </div>
-      <div className="fixed top-4 right-4 z-50">
-        <ModeToggle />
-      </div>
-      <Suspense fallback={<Loading />}>
-        <div className="flex flex-col justify-start md:flex-row gap-2 py-4 px-2">
-          <CategorySelector />
-          <MovieFilters />
-        </div>
-      </Suspense>
+      <Header />
       <Suspense fallback={<LoadingMovieGrid />}>
         <MovieGrid category={category} page={page} sort={sort} />
       </Suspense>

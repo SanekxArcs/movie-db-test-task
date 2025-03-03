@@ -39,7 +39,7 @@ export default function MovieCard({ movie }: MovieCardProps) {
         )}
 
         <div className="absolute top-2 right-2 bg-black/70 text-white text-sm px-2 py-1 rounded-md">
-          {formattedRating}
+          {formattedRating === 'N/A' ? '0.0' : `${formattedRating}`}
         </div>
       </div>
 
