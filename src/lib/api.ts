@@ -71,7 +71,7 @@ export async function getMovieDetails(
   return data;
 }
 
-export async function getCategories(language = "en-US") {
+export async function getCategories(language = "pl-PL") {
   const cacheKey = `genres-${language}`;
 
   if (cache.has(cacheKey)) {

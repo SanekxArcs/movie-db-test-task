@@ -31,10 +31,12 @@ export default async function Home(props: { searchParams: Params }) {
         <h1 className="text-3xl font-bold flex justify-center items-center">
           <Clapperboard className="mr-1 h-8 w-8" /> Movie DB App
         </h1>
-        <p className="text-foreground text-sm">Test task for hurtopony.pl</p>
+        <p className="text-foreground text-sm">
+          Zadanie rekrutacyjne dla hurtopony.pl
+        </p>
       </div>
       <div className="fixed top-4 right-4 z-50">
-        <ModeToggle/>
+        <ModeToggle />
       </div>
       <Suspense fallback={<Loading />}>
         <div className="flex flex-col justify-start md:flex-row gap-2 py-4 px-2">
