@@ -1,38 +1,144 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
+import React, { useEffect } from "react";
 import { getMovieDetails, IMAGE_BASE_URL } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { LoadingMovieDetails } from "@/components/LoadingStates";
 import { Movie } from "@/types/movie";
+import { motion } from "framer-motion";
 
 type Params = Promise<{ id: string }>;
 
-export default async function MoviePage(props: { params: Params }) {
-  
-  try {
-    const params = await props.params;
+
+const pageVariants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { duration: 0.6 } }
+};
+
+const posterVariants = {
+  hidden: { opacity: 0, scale: 0.9 },
+  visible: { opacity: 1, scale: 1, transition: { duration: 0.7 } }
+};
+
+const detailsVariants = {
+  hidden: { opacity: 0 },
+  visible: { 
+    opacity: 1,
+    transition: { 
+      staggerChildren: 0.15,
+      delayChildren: 0.2
+    } 
+  }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }
+};
+
+const castVariants = {
+  hidden: { opacity: 0 },
+  visible: { 
+    opacity: 1, 
+    transition: { 
+      staggerChildren: 0.07,
+      delayChildren: 0.6
+    } 
+  }
+};
+
+const castItemVariants = {
+  hidden: { opacity: 0, x: 20 },
+  visible: { opacity: 1, x: 0, transition: { duration: 0.4 } }
+};
+
+
+const MotionButton = motion(Button);
+
+export default function MoviePage(props: { params: Params }) {
+  const [movie, setMovie] = React.useState<Movie | null>(null);
+  const [error, setError] = React.useState<boolean>(false);
+
+  useEffect(() => {
+    async function loadMovie() {
+      try {
+        const params = await props.params;
         const movieId = params.id;
-    console.log("Fetching details for movie:", movieId);
-    const movie: Movie = await getMovieDetails(movieId);
-    console.log("Fetched movie details:", movie);
-
-    if (!movie) {
-      return <LoadingMovieDetails />;
+        console.log("Fetching details for movie:", movieId);
+        const movieData = await getMovieDetails(movieId);
+        console.log("Fetched movie details:", movieData);
+        setMovie(movieData);
+      } catch (error) {
+        console.error("Error fetching movie details:", error);
+        setError(true);
+      }
     }
+    
+    loadMovie();
+  }, [props.params]);
 
+  if (!movie && !error) {
+    return <LoadingMovieDetails />;
+  }
+
+  if (error || !movie) {
     return (
-      <main className="container mx-auto px-4 py-8">
+      <motion.div 
+        className="container mx-auto px-4 py-8"
+        initial="hidden"
+        animate="visible"
+        variants={pageVariants}
+      >
         <Link href="/">
-          <Button variant="outline" className="mb-8">
+          <MotionButton 
+            variant="outline" 
+            className="mb-8"
+            initial={{ x: -20, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            transition={{ duration: 0.4 }}
+          >
             ← Wróć do filmów
-          </Button>
+          </MotionButton>
         </Link>
+        <motion.h1 variants={itemVariants} className="text-3xl font-bold mb-4">Film nie znaleziony</motion.h1>
+        <motion.p variants={itemVariants}>Przepraszamy, nie mogliśmy znaleźć żądanego filmu.</motion.p>
+      </motion.div>
+    );
+  }
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {/* Movie poster */}
-          <div className="md:col-span-1">
-            <div className="rounded-lg overflow-hidden shadow-lg">
+  return (
+    <motion.main 
+      className="container mx-auto px-4 py-8"
+      initial="hidden"
+      animate="visible"
+      variants={pageVariants}
+    >
+      <Link href="/">
+        <MotionButton 
+          variant="outline" 
+          className="mb-8"
+          initial={{ x: -20, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ duration: 0.4 }}
+          whileHover={{ x: -5 }}
+        >
+          ← Wróć do filmów
+        </MotionButton>
+      </Link>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {/* Movie poster */}
+        <motion.div 
+          className="md:col-span-1"
+          variants={posterVariants}
+        >
+          <div className="rounded-lg overflow-hidden shadow-lg">
+            <motion.div
+              whileHover={{ scale: 1.03 }}
+              transition={{ duration: 0.3 }}
+            >
               <Image
                 src={`${IMAGE_BASE_URL}${movie.poster_path}`}
                 alt={movie.title}
@@ -40,94 +146,96 @@ export default async function MoviePage(props: { params: Params }) {
                 height={750}
                 className="w-full h-auto"
               />
-            </div>
+            </motion.div>
           </div>
+        </motion.div>
 
-          {/* Movie details */}
-          <div className="md:col-span-2">
-            <h1 className="text-4xl font-bold mb-4 cursor-default">
-              {movie.title}
-            </h1>
+        {/* Movie details */}
+        <motion.div  className="md:col-span-2 " variants={detailsVariants}>
 
-            <div className="flex items-center space-x-4 mb-4 cursor-default">
-              <span className="bg-yellow-500 text-black font-bold px-2 py-1 rounded">
-                {movie.vote_average.toFixed(1)}
-              </span>
-              <span>{movie.release_date}</span>
-              <span>{movie.runtime ?? 0} min</span>
-            </div>
+          <motion.h1 variants={itemVariants} className="text-4xl font-bold mb-4 cursor-default">
+            {movie.title}
+          </motion.h1>
 
-            {/* Genres */}
-            <div className="flex flex-wrap gap-2 mb-4 cursor-default">
-              {movie.genres && movie.genres.length > 0 ? (
-                movie.genres.map((genre) => (
-                  <span
-                    key={genre.id}
-                    className="bg-gray-200 dark:bg-gray-700 px-3 py-1 rounded-full text-sm"
-                  >
-                    {genre.name}
-                  </span>
-                ))
-              ) : (
-                <p>Brak dostępnych gatunków</p>
-              )}
-            </div>
+          <motion.div variants={itemVariants} className="flex items-center space-x-4 mb-4 cursor-default">
+            <motion.span 
+              className="bg-yellow-500 text-black font-bold px-2 py-1 rounded"
+              whileHover={{ scale: 1.1 }}
+            >
+              {movie.vote_average.toFixed(1)}
+            </motion.span>
+            <span>{movie.release_date}</span>
+            <span>{movie.runtime ?? 0} min</span>
+          </motion.div>
 
-            {/* Movie overview */}
-            <h2 className="text-2xl font-semibold mb-2 cursor-default">
-              Omówienie
-            </h2>
-            <p className="text-gray-700 dark:text-gray-300 mb-6 cursor-default">
-              {movie.overview}
-            </p>
-
-            {/* Cast list */}
-            <h2 className="text-2xl font-semibold cursor-default mb-2">
-              Obsada aktorska
-            </h2>
-            <div className="flex overflow-x-auto gap-4 pb-4 no-scrollbar">
-              {(movie.credits?.cast ?? []).slice(0, 10).map((person) => (
-                <div
-                  key={person.id}
-                  className="flex-shrink-0 md:w-24 p-0 border-border border dark:border-border-dark rounded-md cursor-default hover:shadow-md transition-shadow duration-300"
+          {/* Genres */}
+          <motion.div variants={itemVariants} className="flex flex-wrap gap-4 mb-4 cursor-default">
+            {movie.genres && movie.genres.length > 0 ? (
+              movie.genres.map((genre) => (
+                <motion.span
+                  key={genre.id}
+                  className="bg-gray-200 dark:bg-gray-700 px-3 py-1 rounded-full text-sm"
                 >
-                  {person.profile_path ? (
-                    <Image
-                      src={`${IMAGE_BASE_URL}${person.profile_path}`}
-                      alt={person.name}
-                      width={100}
-                      height={150}
-                      className="rounded-md mb-1"
-                    />
-                  ) : (
-                    <div className="w-full h-[150px] bg-gray-200 dark:bg-gray-800 rounded-md mb-1" />
-                  )}
-                  <p className="text-sm font-medium truncate px-1">
-                    {person.name}
-                  </p>
-                  <p className="text-xs text-gray-500 truncate pb-1 px-1">
-                    {person.character}
-                  </p>
-                </div>
-              ))}
-            </div>
+                  {genre.name}
+                </motion.span>
+              ))
+            ) : (
+              <p>Brak dostępnych gatunków</p>
+            )}
+          </motion.div>
+
+          {/* Movie overview */}
+          <div className="col-span-2">
+            <motion.h2 variants={itemVariants} className="text-2xl font-semibold mb-2 cursor-default">
+            Omówienie
+          </motion.h2>
+          <motion.p variants={itemVariants} className="text-gray-700 dark:text-gray-300 mb-6 cursor-default">
+            {movie.overview}
+          </motion.p>
           </div>
-        </div>
-      </main>
-    );
-  } catch (error) {
-    console.error("Error fetching movie details:", error);
-    return (
-      <div className="container mx-auto px-4 py-8">
-        <Link href="/">
-          <Button variant="outline" className="mb-8">
-            ← Wróć do filmów
-          </Button>
-        </Link>
-        <h1 className="text-3xl font-bold mb-4">Film nie znaleziony</h1>
-        <p>Przepraszamy, nie mogliśmy znaleźć żądanego filmu.</p>
+          
+
+          {/* Cast list */}
+          <div className="col-span-2">
+            <motion.h2 variants={itemVariants} className="text-2xl font-semibold cursor-default mb-2">
+            Obsada aktorska
+          </motion.h2>
+          <motion.div 
+            className="flex overflow-x-auto gap-4 pb-4 no-scrollbar"
+            variants={castVariants}
+          >
+            {(movie.credits?.cast ?? []).slice(0, 10).map((person) => (
+              <motion.div
+                key={person.id}
+                className="flex-shrink-0 md:w-24 p-0 border-border border dark:border-border-dark rounded-md cursor-default hover:shadow-md transition-shadow duration-300"
+                variants={castItemVariants}
+                whileHover={{ y: -5, boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1)" }}
+              >
+                {person.profile_path ? (
+                  <Image
+                    src={`${IMAGE_BASE_URL}${person.profile_path}`}
+                    alt={person.name}
+                    width={100}
+                    height={150}
+                    className="rounded-md mb-1"
+                  />
+                ) : (
+                  <div className="w-full h-[150px] bg-gray-200 dark:bg-gray-800 rounded-md mb-1" />
+                )}
+                <p className="text-sm font-medium truncate px-1">
+                  {person.name}
+                </p>
+                <p className="text-xs text-gray-500 truncate pb-1 px-1">
+                  {person.character}
+                </p>
+              </motion.div>
+            ))}
+          </motion.div>
+          
+          </div></motion.div>
+                    
       </div>
-    );
-  }
+    </motion.main>
+  );
 }
 

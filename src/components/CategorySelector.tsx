@@ -33,11 +33,9 @@ export default function CategorySelector() {
         setIsLoading(true);
         setError(null);
         const data = await getCategories();
-        console.log(data);
         setCategories(data.genres);
       } catch (error) {
         console.error("Failed to fetch categories:", error);
-        
         setError("Failed to load categories. Please try again.");
       } finally {
         setIsLoading(false);

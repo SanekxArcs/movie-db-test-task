@@ -91,47 +91,18 @@ export async function getCategories(language = "en-US") {
   return data;
 }
 
-export async function searchMovies(query: string, page: number = 1) {
-  if (!query) return { results: [], total_pages: 0, total_results: 0 };
-  
-  const url = `${BASE_URL}/search/movie?api_key=${API_KEY}&query=${encodeURIComponent(query)}&page=${page}`;
-  
-  try {
-    const response = await fetch(url);
-    if (!response.ok) {
-      throw new Error('Failed to fetch search results');
-    }
-    return await response.json();
-  } catch (error) {
-    console.error('Error searching movies:', error);
-    return { results: [], total_pages: 0, total_results: 0 };
-  }
-}
+
 
 export const getImageUrl = (path: string | undefined) => {
   return `${IMAGE_BASE_URL}${path}`;
 };
+
 export const movieCategories = [
   { id: "popular", name: "Popularne", endpoint: "/movie/popular" },
   { id: "top_rated", name: "Najwyżej oceniane", endpoint: "/movie/top_rated" },
   { id: "upcoming", name: "Nadchodzące", endpoint: "/movie/upcoming" },
   { id: "now_playing", name: "Teraz w kinach", endpoint: "/movie/now_playing" },
 ];
-
-export async function getPopularMovies(page: number = 1) {
-  const url = `${BASE_URL}/movie/popular?api_key=${API_KEY}&page=${page}`;
-  
-  try {
-    const response = await fetch(url);
-    if (!response.ok) {
-      throw new Error('Failed to fetch popular movies');
-    }
-    return await response.json();
-  } catch (error) {
-    console.error('Error fetching popular movies:', error);
-    return { results: [], total_pages: 0, total_results: 0 };
-  }
-}
 
 export const fetchMoviesByCategory = getMovies;
 export const fetchMovieDetails = getMovieDetails;

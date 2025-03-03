@@ -4,39 +4,44 @@ import MovieFilters from "@/components/MovieFilters";
 import CategorySelector from "@/components/CategorySelector";
 import { LoadingMovieGrid } from "@/components/LoadingStates";
 import Loading from "./loading";
-import SearchBar from "@/components/SearchBar";
 import { Clapperboard } from "lucide-react";
+import { ModeToggle } from "@/components/ui/mode-toggle";
 
-type Params = Promise<{ 
-  rcdId: string;
+type Params = Promise<{
+  key: string;
   category?: string;
-  page?: string | number;
+  page?: string;
   sort?: string;
-}>
+}>;
 
-export default async function Home(props: { params: Params }) {
-    const params = await props.params;
-  const category = params.category?.toString() || "popular";
-  const page = parseInt(params.page?.toString() || "1");
-  const sort = params.sort?.toString();
+export default async function Home(props: { searchParams: Params }) {
+  const searchParams = await props.searchParams;
+  const category =
+    typeof searchParams.category === "string"
+      ? searchParams.category
+      : "popular";
+  const page =
+    typeof searchParams.page === "string" ? parseInt(searchParams.page) : 1;
+  const sort =
+    typeof searchParams?.sort === "string" ? searchParams.sort : undefined;
 
   return (
     <main className="container mx-auto px-4 py-8">
       <div className="mb-6 flex items-start gap-2 flex-col justify-between">
-        <h1 className="text-3xl font-bold flex justify-center items-center"><Clapperboard className="mr-1 h-8 w-8"/> Movie DB App</h1>
-      <p className="text-foreground text-sm">Test task for hurtopony.pl</p>
+        <h1 className="text-3xl font-bold flex justify-center items-center">
+          <Clapperboard className="mr-1 h-8 w-8" /> Movie DB App
+        </h1>
+        <p className="text-foreground text-sm">Test task for hurtopony.pl</p>
       </div>
-      
-
-      <div className="mb-6 flex gap-2 flex-col lg:flex-row justify-between">
-        <Suspense fallback={<Loading />}>
-        <div className="flex flex-col justify-between md:flex-row gap-2">
+      <div className="fixed top-4 right-4 z-50">
+        <ModeToggle/>
+      </div>
+      <Suspense fallback={<Loading />}>
+        <div className="flex flex-col justify-start md:flex-row gap-2 py-4 px-2">
           <CategorySelector />
           <MovieFilters />
         </div>
-          <SearchBar />
-        </Suspense>
-      </div>
+      </Suspense>
       <Suspense fallback={<LoadingMovieGrid />}>
         <MovieGrid category={category} page={page} sort={sort} />
       </Suspense>
