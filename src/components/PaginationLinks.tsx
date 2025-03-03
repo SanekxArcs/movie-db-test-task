@@ -6,7 +6,7 @@ interface PaginationLinksProps {
   currentPage: number;
 }
 
-export default function PaginationLinks({ totalPages, currentPage }: PaginationLinksProps) {
+export default function PaginationLinks({ totalPages, currentPage, }: PaginationLinksProps) {
 
   const createPageURL = (pageNumber: number) => {
     return `?page=${pageNumber}`;

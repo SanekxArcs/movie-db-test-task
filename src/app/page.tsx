@@ -7,14 +7,18 @@ import Loading from "./loading";
 import SearchBar from "@/components/SearchBar";
 import { Clapperboard } from "lucide-react";
 
-export default async function Home({
-  searchParams,
-}: {
-  searchParams: { [key: string]: string | string[] | undefined };
-}) {
-  const category = searchParams.category?.toString() || "popular";
-  const page = parseInt(searchParams.page?.toString() || "1");
-  const sort = searchParams.sort?.toString();
+type Params = Promise<{ 
+  rcdId: string;
+  category?: string;
+  page?: string | number;
+  sort?: string;
+}>
+
+export default async function Home(props: { params: Params }) {
+    const params = await props.params;
+  const category = params.category?.toString() || "popular";
+  const page = parseInt(params.page?.toString() || "1");
+  const sort = params.sort?.toString();
 
   return (
     <main className="container mx-auto px-4 py-8">

@@ -1,4 +1,5 @@
 
+
 import { Movie, MovieResponse } from "@/types/movie";
 
 const API_KEY = process.env.TMDB_API_KEY;
@@ -6,7 +7,6 @@ const BASE_URL = "https://api.themoviedb.org/3";
 export const IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500";
 
 const cache = new Map();
-
 
 export async function getMovies(
   categoryOrGenre = "popular",
@@ -16,7 +16,6 @@ export async function getMovies(
 ): Promise<MovieResponse> {
   let url;
 
-
   if (categoryOrGenre.startsWith("genre/")) {
     const genreId = categoryOrGenre.split("/")[1];
     url = `${BASE_URL}/discover/movie?api_key=${API_KEY}&with_genres=${genreId}&page=${page}&language=${language}`;
@@ -25,7 +24,6 @@ export async function getMovies(
       url += `&sort_by=${sort_by}`;
     }
   } else {
-
     url = `${BASE_URL}/movie/${categoryOrGenre}?api_key=${API_KEY}&page=${page}&language=${language}`;
 
     if (categoryOrGenre === "discover" && sort_by) {
@@ -33,8 +31,9 @@ export async function getMovies(
     }
   }
 
-
-  const cacheKey = `movies-${categoryOrGenre}-${page}-${language}-${sort_by || 'default'}`;
+  const cacheKey = `movies-${categoryOrGenre}-${page}-${language}-${
+    sort_by || "default"
+  }`;
   if (cache.has(cacheKey)) {
     return cache.get(cacheKey);
   }
@@ -50,6 +49,8 @@ export async function getMovies(
 
   return data;
 }
+
+
 
 export async function getMovieDetails(
   id: string,
@@ -74,7 +75,6 @@ export async function getMovieDetails(
   return data;
 }
 
-
 export async function getCategories(language = "en-US") {
   const cacheKey = `genres-${language}`;
 
@@ -94,7 +94,6 @@ export async function getCategories(language = "en-US") {
 
   return data;
 }
-
 
 export async function searchMovies(
   query: string,
@@ -128,12 +127,10 @@ export async function searchMovies(
   }
 }
 
-
 export const getImageUrl = (path: string | undefined) => {
   if (!path) return "/placeholder.png";
   return `${IMAGE_BASE_URL}${path}`;
 };
-
 
 export const movieCategories = [
   { id: "popular", name: "Popularne", endpoint: "/movie/popular" },
@@ -141,7 +138,6 @@ export const movieCategories = [
   { id: "upcoming", name: "Nadchodzące", endpoint: "/movie/upcoming" },
   { id: "now_playing", name: "Teraz w kinach", endpoint: "/movie/now_playing" },
 ];
-
 
 export const fetchMoviesByCategory = getMovies;
 export const fetchMovieDetails = getMovieDetails;

@@ -1,4 +1,3 @@
-/* eslint-disable */
 
 import Image from "next/image";
 import Link from "next/link";
@@ -6,19 +5,14 @@ import React from "react";
 import { getMovieDetails, IMAGE_BASE_URL } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { LoadingMovieDetails } from "@/components/LoadingStates";
-import type { Metadata } from "next";
 import { Movie } from "@/types/movie";
 
+type Params = Promise<{ rcdId: string }>;
 
-
-export default async function MoviePage({
-  params,
-  _searchParams,
-}: {
-  params: { id: string };
-  _searchParams: { [key: string]: string | string[] | undefined };
-}): Promise<React.ReactElement> {
-  const movie: Movie | null = await getMovieDetails(params.id);
+export default async function MoviePage(props: { params: Params }) {
+  const params = await props.params;
+  const rcdId = params.rcdId;
+  const movie: Movie = await getMovieDetails(rcdId);
 
   if (!movie) {
     return <LoadingMovieDetails />;
@@ -121,16 +115,3 @@ export default async function MoviePage({
 }
 
 
-export async function generateMetadata({
-  params,
-  _searchParams,
-}: {
-  params: { id: string };
-  _searchParams: { [key: string]: string | string[] | undefined };
-}): Promise<Metadata> {
-  const movie: Movie | null = await getMovieDetails(params.id);
-  return {
-    title: movie?.title || "Szczegóły filmu",
-    description: movie?.overview || "Zobacz szczegóły dotyczące tego filmu",
-  };
-}

@@ -32,7 +32,6 @@ export default async function MovieGrid({
         <PaginationLinks 
           totalPages={totalPages}
           currentPage={page}
-          category={category}
         />
       </div>
     </div>
