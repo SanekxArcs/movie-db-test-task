@@ -14,7 +14,7 @@ interface SearchBarProps {
 }
 
 export default function SearchBar({
-  placeholder = "Search for movies...",
+  placeholder = "Wyszukaj filmy...",
   className,
 }: SearchBarProps) {
   const router = useRouter();
@@ -31,22 +31,14 @@ export default function SearchBar({
 
     setIsSearching(true);
 
-    // Create new URLSearchParams object based on the current URL search params
     const params = new URLSearchParams(searchParams);
 
-    // Set the query parameter
     params.set("query", query);
 
-    // Reset to page 1 when searching
     params.delete("page");
 
-    // Navigate to the search results page
     router.push(`/search?${params.toString()}`);
 
-    // You could alternatively just filter on the current page:
-    // router.push(`/?${params.toString()}`);
-
-    // Simulate network delay for the loading indicator
     setTimeout(() => {
       setIsSearching(false);
     }, 300);
@@ -89,13 +81,13 @@ export default function SearchBar({
             disabled={isSearching}
           >
             <X className="h-4 w-4 text-muted-foreground" />
-            <span className="sr-only">Clear search</span>
+            <span className="sr-only">Wyczyść</span>
           </Button>
         )}
       </div>
 
       <Button type="submit" disabled={isSearching || !query.trim()}>
-        {isSearching ? <Loader2 className="h-4 w-4 animate-spin" /> : "Search"}
+        {isSearching ? <Loader2 className="h-4 w-4 animate-spin" /> : "Szukaj"}
       </Button>
     </form>
   );

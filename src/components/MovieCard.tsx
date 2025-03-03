@@ -10,10 +10,8 @@ interface MovieCardProps {
 
 export default function MovieCard({ movie }: MovieCardProps) {
   const { id, title, poster_path, vote_average, release_date } = movie;
-  
 
   const releaseYear = release_date ? new Date(release_date).getFullYear() : null;
-  
 
   const formattedRating = vote_average ? vote_average.toFixed(1) : 'N/A';
   
