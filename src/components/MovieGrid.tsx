@@ -7,6 +7,8 @@ import MovieCard from './MovieCard';
 import Pagination from './Pagination';
 import { LoadingMovieGrid } from './LoadingStates';
 import { motion } from 'framer-motion';
+import Error from '@/app/error';
+import NotFound from '@/app/not-found';
 
 interface MovieGridProps {
   category: string;
@@ -66,11 +68,11 @@ export default function MovieGrid({ category, page, sort }: MovieGridProps) {
   }
 
   if (error) {
-    return <div className="text-center text-red-500">{error}</div>;
+    return <Error />;
   }
 
   if (movies.length === 0) {
-    return <div className="text-center">Nie znaleziono</div>;
+    return <NotFound/>;
   }
 
   return (

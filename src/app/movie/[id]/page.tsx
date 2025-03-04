@@ -1,17 +1,15 @@
 "use client";
 
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 import { getMovieDetails, IMAGE_BASE_URL } from "@/lib/api";
-import { Button } from "@/components/ui/button";
 import { LoadingMovieDetails } from "@/components/LoadingStates";
 import { Movie } from "@/types/movie";
 import { motion } from "framer-motion";
 import { ImageOff } from "lucide-react";
+import { BackButton } from "@/components/BackButton";
 
 type Params = Promise<{ id: string }>;
-
 
 const pageVariants = {
   hidden: { opacity: 0 },
@@ -56,12 +54,11 @@ const castItemVariants = {
 };
 
 
-const MotionButton = motion(Button);
 
 export default function MoviePage(props: { params: Params }) {
-  const router = useRouter();
   const [movie, setMovie] = React.useState<Movie | null>(null);
   const [error, setError] = React.useState<boolean>(false);
+  const [loading, setLoading] = React.useState<boolean>(true);
 
   useEffect(() => {
     async function loadMovie() {
@@ -70,42 +67,54 @@ export default function MoviePage(props: { params: Params }) {
         const movieId = params.id;
         const movieData = await getMovieDetails(movieId);
         setMovie(movieData);
+        setLoading(false);
       } catch (error) {
         console.error("Error fetching movie details:", error);
         setError(true);
+        setLoading(false);
       }
     }
     
     loadMovie();
   }, [props.params]);
 
-  if (!movie && !error) {
-    return <LoadingMovieDetails />;
+  if (loading) {
+    return (
+      <>
+        <motion.div
+          className="container mx-auto px-4 py-8"
+          initial="hidden"
+          animate="visible"
+          variants={pageVariants}
+        >
+          <BackButton />
+          <LoadingMovieDetails />
+        </motion.div>
+        
+      </>
+    );
   }
 
   if (error || !movie) {
     return (
-      <motion.div 
+      <motion.div
         className="container mx-auto px-4 py-8"
         initial="hidden"
         animate="visible"
         variants={pageVariants}
       >
-        <MotionButton 
-          variant="outline" 
-          className="mb-8"
-          initial={{ x: -20, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          transition={{ duration: 0.4 }}
-          onClick={() => router.back()}
-        >
-          ← Wróć
-        </MotionButton>
+        <BackButton />
         <div className="flex flex-col items-center justify-center space-y-4">
-          <motion.h1 variants={itemVariants} className="text-3xl font-bold mb-4">Film nie znaleziony</motion.h1>
-        <motion.p variants={itemVariants}>Przepraszamy, nie mogliśmy znaleźć żądanego filmu.</motion.p>
+          <motion.h1
+            variants={itemVariants}
+            className="text-3xl font-bold mb-4"
+          >
+            Film nie znaleziony
+          </motion.h1>
+          <motion.p variants={itemVariants}>
+            Przepraszamy, nie mogliśmy znaleźć żądanego filmu.
+          </motion.p>
         </div>
-        
       </motion.div>
     );
   }
@@ -117,17 +126,7 @@ export default function MoviePage(props: { params: Params }) {
       animate="visible"
       variants={pageVariants}
     >
-      <MotionButton
-        variant="outline"
-        className="mb-8"
-        initial={{ x: -20, opacity: 0 }}
-        animate={{ x: 0, opacity: 1 }}
-        transition={{ duration: 0.4 }}
-        whileHover={{ x: -5 }}
-        onClick={() => router.back()}
-      >
-        ← Wróć
-      </MotionButton>
+      <BackButton />
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         {/* Movie poster */}
@@ -137,14 +136,21 @@ export default function MoviePage(props: { params: Params }) {
               whileHover={{ scale: 1.03 }}
               transition={{ duration: 0.3 }}
             >
-              {movie.poster_path ? <Image
-                src={`${IMAGE_BASE_URL}${movie.poster_path}`}
-                alt={movie.title}
-                width={500}
-                height={750}
-                className="w-full h-auto"
-              /> : <div className="w-full h-[750px] bg-gray-200 dark:bg-gray-800 flex justify-center items-center"><ImageOff /></div>}
-              
+              {movie.poster_path ? (
+                <Image
+                  src={`${IMAGE_BASE_URL}${movie.poster_path}`}
+                  alt={movie.title}
+                  width={500}
+                  height={750}
+                  className="w-full h-auto"
+                />
+              ) : (
+                <div
+                  className={`w-full h-[750px] bg-gray-200 dark:bg-gray-800 flex justify-center items-centermovie-card-${movie.id}`}
+                >
+                  <ImageOff />
+                </div>
+              )}
             </motion.div>
           </div>
         </motion.div>

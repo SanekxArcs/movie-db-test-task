@@ -27,7 +27,7 @@ export default function MovieCard({ movie }: MovieCardProps) {
             alt={title}
             fill
             sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
-            className="object-cover rounded-lg transition-transform duration-300 group-hover:scale-105"
+            className={`object-cover  rounded-lg transition-transform duration-300 group-hover:scale-105 movie-card-${id}`}
             placeholder="empty"
             loading="lazy"
             priority={false}
@@ -39,7 +39,7 @@ export default function MovieCard({ movie }: MovieCardProps) {
         )}
 
         <div className="absolute top-2 right-2 bg-black/70 text-white text-sm px-2 py-1 rounded-md">
-          {formattedRating === 'N/A' ? '0.0' : `${formattedRating}`}
+          {formattedRating === "N/A" ? "0.0" : `${formattedRating}`}
         </div>
       </div>
 
