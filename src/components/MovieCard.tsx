@@ -33,13 +33,13 @@ export default function MovieCard({ movie }: MovieCardProps) {
             priority={false}
           />
         ) : (
-          <div className="flex items-center animate-pulse justify-center h-full w-full bg-gray-100">
+          <div className="flex flex-col items-center justify-center h-full w-full gap-4 bg-gray-200 dark:bg-gray-800">
             <ImageOff className="h-12 w-12 text-gray-400" />
           </div>
         )}
 
         <div className="absolute top-2 right-2 bg-black/70 text-white text-sm px-2 py-1 rounded-md">
-          {formattedRating === "N/A" ? "0.0" : `${formattedRating}`}
+          {formattedRating === "N/A" ? "Brak oceny" : `${formattedRating}`}
         </div>
       </div>
 

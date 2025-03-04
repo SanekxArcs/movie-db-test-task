@@ -146,9 +146,10 @@ export default function MoviePage(props: { params: Params }) {
                 />
               ) : (
                 <div
-                  className={`w-full h-[750px] bg-gray-200 dark:bg-gray-800 flex justify-center items-centermovie-card-${movie.id}`}
+                  className={`w-full h-[750px] gap-4 bg-gray-200 dark:bg-gray-800 flex flex-col justify-center items-center movie-card-${movie.id}`}
                 >
                   <ImageOff />
+                  <p className="text-balance">Nie znaleziono zdjęcia do tego filmu.</p>
                 </div>
               )}
             </motion.div>
@@ -161,7 +162,7 @@ export default function MoviePage(props: { params: Params }) {
             variants={itemVariants}
             className="text-4xl font-bold mb-4 cursor-default"
           >
-            {movie.title}
+            {movie.title ?? "Brak tytułu"}
           </motion.h1>
 
           <motion.div
@@ -172,10 +173,16 @@ export default function MoviePage(props: { params: Params }) {
               className="bg-yellow-500 text-black font-bold px-2 py-1 rounded"
               whileHover={{ scale: 1.1 }}
             >
-              {movie.vote_average.toFixed(1)}
+              {movie.vote_average.toFixed(1)
+                ? movie.vote_average.toFixed(1)
+                : "Brak oceny"}
             </motion.span>
             <span>{movie.release_date}</span>
-            <span>{movie.runtime ?? 0} min</span>
+            <span>
+              {movie.runtime
+                ? `${movie.runtime} min`
+                : "Czas nie został określonyy"}
+            </span>
           </motion.div>
 
           {/* Genres */}
@@ -203,13 +210,13 @@ export default function MoviePage(props: { params: Params }) {
               variants={itemVariants}
               className="text-2xl font-semibold mb-2 cursor-default"
             >
-              Omówienie
+              {movie.overview ? "Opis" : "Brak dostępnego opisu filmu"}
             </motion.h2>
             <motion.p
               variants={itemVariants}
               className="text-gray-700 dark:text-gray-300 mb-6 cursor-default"
             >
-              {movie.overview}
+              {movie.overview ?? "Brak dostępnego opisu filmu."}
             </motion.p>
           </div>
 
@@ -219,7 +226,9 @@ export default function MoviePage(props: { params: Params }) {
               variants={itemVariants}
               className="text-2xl font-semibold cursor-default mb-2"
             >
-              Obsada aktorska
+              {movie.credits?.cast.length === 0
+                ? "Brak obsady"
+                : "Obsada aktorska"}
             </motion.h2>
             <motion.div
               className="flex overflow-x-auto gap-4 py-4"
