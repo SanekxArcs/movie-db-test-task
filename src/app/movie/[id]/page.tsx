@@ -8,6 +8,7 @@ import { Movie } from "@/types/movie";
 import { motion } from "framer-motion";
 import { ImageOff } from "lucide-react";
 import { BackButton } from "@/components/BackButton";
+import { unstable_ViewTransition as ViewTransition } from "react";
 
 type Params = Promise<{ id: string }>;
 
@@ -130,13 +131,14 @@ export default function MoviePage(props: { params: Params }) {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         {/* Movie poster */}
+        
         <motion.div className="md:col-span-1" variants={posterVariants}>
           <div className="rounded-lg overflow-hidden shadow-lg">
             <motion.div
               whileHover={{ scale: 1.03 }}
               transition={{ duration: 0.3 }}
             >
-              {movie.poster_path ? (
+              <ViewTransition name="poster">{movie.poster_path ? (
                 <Image
                   src={`${IMAGE_BASE_URL}${movie.poster_path}`}
                   alt={movie.title}
@@ -151,19 +153,22 @@ export default function MoviePage(props: { params: Params }) {
                   <ImageOff />
                   <p className="text-balance">Nie znaleziono zdjęcia do tego filmu.</p>
                 </div>
-              )}
+              )}</ViewTransition>
             </motion.div>
           </div>
         </motion.div>
+        
 
         {/* Movie details */}
         <motion.div className="md:col-span-2 " variants={detailsVariants}>
+          <ViewTransition name="name">
           <motion.h1
             variants={itemVariants}
             className="text-4xl font-bold mb-4 cursor-default"
           >
             {movie.title ?? "Brak tytułu"}
           </motion.h1>
+          </ViewTransition>
 
           <motion.div
             variants={itemVariants}
@@ -177,7 +182,9 @@ export default function MoviePage(props: { params: Params }) {
                 ? movie.vote_average.toFixed(1)
                 : "Brak oceny"}
             </motion.span>
+            <ViewTransition name="year">
             <span>{movie.release_date}</span>
+            </ViewTransition>
             <span>
               {movie.runtime
                 ? `${movie.runtime} min`
