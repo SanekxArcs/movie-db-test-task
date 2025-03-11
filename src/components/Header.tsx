@@ -1,9 +1,8 @@
-import { Suspense } from "react";
+
 import { Clapperboard } from "lucide-react";
 import { ModeToggle } from "@/components/ui/mode-toggle";
 import CategorySelector from "@/components/CategorySelector";
 import MovieFilters from "@/components/MovieFilters";
-import Loading from "@/app/loading";
 import Link from "next/link";
 import { TooltipWrapper } from "./ui/tooltip-wrapper";
 
@@ -25,12 +24,10 @@ export default function Header() {
       <div className="fixed top-4 right-4 z-50">
         <ModeToggle />
       </div>
-      <Suspense fallback={<Loading />}>
         <div className="flex flex-col justify-start md:flex-row gap-2 py-4 px-2">
           <CategorySelector />
           <MovieFilters />
         </div>
-      </Suspense>
     </>
   );
 }
