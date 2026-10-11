@@ -9,6 +9,15 @@ Aplikacja umożliwia użytkownikom przeglądanie kolekcji filmów pobieranych z 
 
 ## ✨ Funkcje
 
+- **Języki**: ukraiński (domyślny), angielski i polski, przypięte w selektorze. Wybrany język jest zapamiętywany i stosowany do interfejsu oraz danych TMDB.
+- **Wyszukiwanie**: wyszukiwanie tytułów z paginacją.
+- **Dodatkowe filtry**: gatunek, rok premiery, minimalna ocena i język oryginału. Sortowanie po popularności, ocenie, dacie i tytule.
+- **Ulubione i chcę obejrzeć**: niezależne listy zapisywane lokalnie w przeglądarce, z wyszukiwaniem i filtrami.
+
+Przy wyszukiwaniu tekstowym filtry gatunku, oceny i języka oryginału oraz sortowanie dotyczą bieżącej strony wyników TMDB. Przy przeglądaniu filmy są filtrowane przez API przed paginacją. Listy są dostępne tylko w przeglądarce, w której je zapisano; nie wymagają konta.
+
+Klucz `TMDB_API_KEY` pozostaje na serwerze; przeglądarka korzysta z `/api/movies`. Zobacz `.env.example`.
+
 - **Lista filmów**: Przeglądanie paginowanej listy filmów z podstawowymi informacjami
 - **Szczegóły filmu**: Wyświetlanie kompleksowych informacji o wybranym filmie
 - **Kategoryzacja**: Przeglądanie filmów według kategorii/gatunków
@@ -19,7 +28,7 @@ Aplikacja umożliwia użytkownikom przeglądanie kolekcji filmów pobieranych z 
 
 ## 🛠️ Użyte technologie
 
-- **Framework**: Next.js 14 z App Router
+- **Framework**: Next.js 16 z App Router
 - **Język**: TypeScript
 - **Style**: Tailwind CSS
 - **Komponenty UI**: Shadcn/UI
@@ -27,7 +36,8 @@ Aplikacja umożliwia użytkownikom przeglądanie kolekcji filmów pobieranych z 
 
 ## 📋 Wymagania
 
-- Node.js 18.0.0 lub nowszy
+- Node.js 22.13.0 lub nowszy
+- Polecenia `dev` i `build` korzystają z Webpacka: worker CSS Turbopacka w Next.js 16 kończy się błędem w tym środowisku Windows.
 - Klucz API z TMDB (The Movie Database)
 
 ## 🚀 Pierwsze kroki
@@ -51,7 +61,7 @@ Aplikacja umożliwia użytkownikom przeglądanie kolekcji filmów pobieranych z 
 
 3. Utwórz plik `.env.local` w głównym katalogu projektu i dodaj swój klucz API TMDB:
    ```
-   NEXT_PUBLIC_TMDB_API_KEY=twój_klucz_api_tutaj
+   TMDB_API_KEY=twój_klucz_api_tutaj
    ```
 
 ### Uruchamianie aplikacji
@@ -104,7 +114,7 @@ Aplikację można wdrożyć na Vercel:
 
 1. Wypchnij kod do repozytorium GitHub
 2. Połącz repozytorium z Vercel 
-3. Zmień "Build and Output Setttings" -> "Install Command" na: npm i --legacy-peer-deps 
+3. Ustaw polecenie instalacji na `npm ci` (bez `--legacy-peer-deps`).
 4. Dodaj zmienne środowiskowe w ustawieniach projektu Vercel
 5. Wdróż
 

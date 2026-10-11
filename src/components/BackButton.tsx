@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { CircleArrowLeft } from "lucide-react";
+import { useApp } from "./AppProvider";
 
 const MotionButton = motion(Button);
 
@@ -13,6 +14,7 @@ interface BackButtonProps {
 
 export const BackButton = ({ className = "mb-8" }: BackButtonProps) => {
   const router = useRouter();
+  const { t, language } = useApp();
   
   return (
     <MotionButton
@@ -22,9 +24,9 @@ export const BackButton = ({ className = "mb-8" }: BackButtonProps) => {
       animate={{ x: 0, opacity: 1 }}
       transition={{ duration: 0.4 }}
       whileHover={{ x: -5 }}
-      onClick={() => router.back()}
+      onClick={() => window.history.length > 1 ? router.back() : router.push(`/?lang=${language}`)}
     >
-      <CircleArrowLeft/> Wróć
+      <CircleArrowLeft/> {t.back}
     </MotionButton>
   );
 };

@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  turbopack: { root: __dirname },
   images: {
     remotePatterns: [
       {
@@ -8,13 +9,6 @@ const nextConfig: NextConfig = {
         hostname: "image.tmdb.org",
       },
     ],
-    domains: ["image.tmdb.org"],
-  },
-  experimental: {
-    viewTransition: true,
-  },
-  env: {
-    TMDB_API_KEY: process.env.TMDB_API_KEY,
   },
 };
 

@@ -3,6 +3,7 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "./ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useApp } from "./AppProvider";
 
 interface PaginationProps {
   currentPage: number;
@@ -11,6 +12,7 @@ interface PaginationProps {
 
 export default function Pagination({ currentPage, totalPages }: PaginationProps) {
   const router = useRouter();
+  const { t } = useApp();
   const searchParams = useSearchParams();
 
   const handlePageChange = (page: number) => {
@@ -44,6 +46,7 @@ export default function Pagination({ currentPage, totalPages }: PaginationProps)
       <Button
         variant="outline"
         size="icon"
+        aria-label={t.previous}
         onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
         disabled={currentPage === 1}
       >
@@ -54,6 +57,8 @@ export default function Pagination({ currentPage, totalPages }: PaginationProps)
         <Button
           key={pageNum}
           variant={pageNum === currentPage ? "default" : "outline"}
+          aria-label={`${t.page} ${pageNum}`}
+          aria-current={pageNum === currentPage ? "page" : undefined}
           onClick={() => handlePageChange(pageNum)}
         >
           {pageNum}
@@ -63,8 +68,9 @@ export default function Pagination({ currentPage, totalPages }: PaginationProps)
       <Button
         variant="outline"
         size="icon"
+        aria-label={t.next}
         onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
-        disabled={currentPage === totalPages}
+        disabled={currentPage >= totalPages}
       >
         <ChevronRight className="h-4 w-4" />
       </Button>

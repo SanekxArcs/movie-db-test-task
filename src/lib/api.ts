@@ -1,108 +1,19 @@
-import { Movie, MovieResponse } from "@/types/movie";
+import type { Genre, Movie, MovieResponse } from "@/types/movie";
 
-const API_KEY = process.env.TMDB_API_KEY;
-const BASE_URL = "https://api.themoviedb.org/3";
 export const IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500";
+export const getImageUrl = (path: string) => `${IMAGE_BASE_URL}${path}`;
 
-const cache = new Map();
-
-export async function getMovies(
-  categoryOrGenre = "popular",
-  page = 1,
-  language = "pl-PL",
-  sort_by?: string
-): Promise<MovieResponse> {
-  let url;
-
-  if (categoryOrGenre.startsWith("genre/")) {
-    const genreId = categoryOrGenre.split("/")[1];
-    url = `${BASE_URL}/discover/movie?api_key=${API_KEY}&with_genres=${genreId}&page=${page}&language=${language}`;
-
-    if (sort_by) {
-      url += `&sort_by=${sort_by}`;
-    }
-  } else {
-    url = `${BASE_URL}/movie/${categoryOrGenre}?api_key=${API_KEY}&page=${page}&language=${language}`;
-
-    if (categoryOrGenre === "discover" && sort_by) {
-      url = `${BASE_URL}/discover/movie?api_key=${API_KEY}&page=${page}&language=${language}&sort_by=${sort_by}`;
-    }
-  }
-
-  const cacheKey = `movies-${categoryOrGenre}-${page}-${language}-${
-    sort_by || "default"
-  }`;
-  if (cache.has(cacheKey)) {
-    return cache.get(cacheKey);
-  }
-
-  const response = await fetch(url);
-
-  if (!response.ok) {
-    throw new Error(`Failed to fetch movies: ${response.status}`);
-  }
-
-  const data = await response.json();
-  cache.set(cacheKey, data);
-
-  return data;
+async function request<T>(params: URLSearchParams, signal?: AbortSignal): Promise<T> {
+  const response = await fetch(`/api/movies?${params}`, { signal });
+  if (!response.ok) throw new Error("Unable to load movies");
+  return response.json();
 }
-
-export async function getMovieDetails(
-  id: string,
-  language = "pl-PL"
-): Promise<Movie> {
-  const cacheKey = `movie-${id}-${language}`;
-
-  if (cache.has(cacheKey)) {
-    return cache.get(cacheKey);
-  }
-
-  const url = `${BASE_URL}/movie/${id}?api_key=${API_KEY}&append_to_response=credits,videos,similar&language=${language}`;
-  const response = await fetch(url);
-
-  if (!response.ok) {
-    throw new Error(`Failed to fetch movie details: ${response.status}`);
-  }
-
-  const data = await response.json();
-  cache.set(cacheKey, data);
-
-  return data;
+export function getMovies(params: URLSearchParams, signal?: AbortSignal) {
+  return request<MovieResponse>(params, signal);
 }
-
-export async function getCategories(language = "pl-PL") {
-  const cacheKey = `genres-${language}`;
-
-  if (cache.has(cacheKey)) {
-    return cache.get(cacheKey);
-  }
-
-  const url = `${BASE_URL}/genre/movie/list?api_key=${API_KEY}&language=${language}`;
-  const response = await fetch(url);
-
-  if (!response.ok) {
-    throw new Error(`Failed to fetch categories: ${response.status}`);
-  }
-
-  const data = await response.json();
-  cache.set(cacheKey, data);
-
-  return data;
+export function getMovieDetails(id: string, language = "uk-UA", signal?: AbortSignal) {
+  return request<Movie>(new URLSearchParams({ id, language }), signal);
 }
-
-
-
-export const getImageUrl = (path: string | undefined) => {
-  return `${IMAGE_BASE_URL}${path}`;
-};
-
-export const movieCategories = [
-  { id: "popular", name: "Popularne", endpoint: "/movie/popular" },
-  { id: "top_rated", name: "Najwyżej oceniane", endpoint: "/movie/top_rated" },
-  { id: "upcoming", name: "Nadchodzące", endpoint: "/movie/upcoming" },
-  { id: "now_playing", name: "Teraz w kinach", endpoint: "/movie/now_playing" },
-];
-
-export const fetchMoviesByCategory = getMovies;
-export const fetchMovieDetails = getMovieDetails;
+export function getCategories(language = "uk-UA", signal?: AbortSignal) {
+  return request<{ genres: Genre[] }>(new URLSearchParams({ resource: "genres", language }), signal);
+}

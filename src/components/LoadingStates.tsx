@@ -1,5 +1,4 @@
 import { Skeleton } from "@/components/ui/skeleton";
-import { unstable_ViewTransition as ViewTransition } from "react";
 
 export function LoadingMovieGrid() {
   return (
@@ -20,13 +19,9 @@ export function LoadingMovieGrid() {
 export function LoadingMovieDetails() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-      <ViewTransition name="poster">
         <Skeleton className="aspect-[2/3] w-full rounded-lg md:col-span-1" />
-      </ViewTransition>
       <div className="md:col-span-2 space-y-4">
-        <ViewTransition name="name">
         <Skeleton className="h-10 w-3/4" />
-        </ViewTransition>
         <Skeleton className="h-6 w-1/4" />
         <Skeleton className="h-4 w-full" />
         <Skeleton className="h-4 w-full" />
